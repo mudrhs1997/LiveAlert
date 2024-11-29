@@ -1,4 +1,6 @@
-# iOS App using Clean Architecture + MVVM
+# LiveAlert
+
+Alarm with live activity
 
 ![Platform](https://img.shields.io/badge/platform-iOS-orange.svg)
 ![Languages](https://img.shields.io/badge/language-Swift-orange.svg)

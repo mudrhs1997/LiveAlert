@@ -4,26 +4,44 @@ import Domain
 import Common
 import RxSwift
 import RxCocoa
+import UserNotifications
 
 public final class RepositoryImpl: Repository {
+  private let dataSource = DataSource()
 
   public init() { }
 
-  // MARK: - Fetch movie list
-  public func fetchMovieList() -> Observable<[Movie]> {
-    guard let url = URL(string: "https://yts.mx/api/v2/list_movies.json") else { return Observable.just([]) }
-    return URLRequest.get(url: url).map { (dto: ResponseDTO) in
-      let movies = dto.data.movies.map {
-        $0.toEntity()
+  // MARK: - Fetch alarm list
+  public func fetchAlarmList() -> Observable<[Alarm]> {
+    return dataSource.getPendingNotificationRequests().map { (requests: [UNNotificationRequest]) in
+      let alarms = requests.map {
+        Alarm(id: $0.identifier, content: $0.content.title, trigger: $0.trigger?.description)
       }
-      return movies
+      return alarms
     }.asObservable()
   }
 
-  public func addAlarm() -> Observable<Bool> {
-    let calendar = Calendar.current
-    let newDate = calendar.date(byAdding: DateComponents(second: 5), to: .now)
-    let components = calendar.component([.hour, .minute, .second], from: newDate!)
-    return UNUserNotificationCenter.current().addNotificationRequest(by: components, id: UUID())
+  // MARK: - Add alarm
+  public func addAlarm(title: String,
+                       body: String,
+                       at date: DateComponents) -> Observable<[Alarm]> {
+    dataSource.addNotificationRequestToCenter(withIdentifier: UUID(), title: title, body: body, at: date)
+    return Observable.just([])
+  }
+
+
+  // MARK: - Edit alarm. Add exsiting alarm's UUID to edit.
+  public func editAlarm(withIdentifier identifier: UUID,
+                        title: String,
+                        body: String,
+                        at date: DateComponents) -> Observable<[Alarm]> {
+    dataSource.addNotificationRequestToCenter(withIdentifier: identifier, title: title, body: body, at: date)
+    return Observable.just([])
+  }
+
+  // MARK: - Remove Alarm. Remove all alarm in array by UUID.
+  public func removeAlarms(with identifiers: [String]) -> Observable<[Alarm]> {
+    dataSource.removeNotificationRequestFromCenter(with: identifiers)
+    return Observable.just([])
   }
 }

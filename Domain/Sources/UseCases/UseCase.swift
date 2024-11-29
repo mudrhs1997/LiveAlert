@@ -10,11 +10,28 @@ public final class UseCase {
     self.repository = repository
   }
 
-  public func fetchMovie() -> Observable<[Movie]> {
-    return repository.fetchMovieList()
+  public func getAlarmList() -> Observable<[Alarm]> {
+    return repository.fetchAlarmList()
   }
 
-  public func addAlarm() -> Observable<Bool> {
-    return repository.addAlarm()
+  public func addAlarm(title: String,
+                       body: String,
+                       at date: DateComponents) -> Observable<[Alarm]> {
+    return repository
+      .addAlarm(title: title, body: body, at: date)
+      .concat(repository.fetchAlarmList())
+  }
+
+  public func editAlarm(withIdentifier identifier: UUID,
+                        title: String,
+                        body: String,
+                        at date: DateComponents) -> Observable<[Alarm]> {
+    return repository
+      .editAlarm(withIdentifier: identifier, title: title, body: body, at: date)
+      .concat(repository.fetchAlarmList())
+  }
+
+  public func removeAlarm() -> Observable<Bool> {
+    return Observable.just(true)
   }
 }

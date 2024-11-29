@@ -22,8 +22,8 @@ final class AppCoordinator: Coordinator {
 
   private func startMainViewController() {
     guard let window else { return }
-    let movieCoordinator = MovieCoordinator(navigationController: self.navigationController)
-    movieCoordinator.start()
+    let alarmCoordinator = AlarmCoordinator(navigationController: self.navigationController)
+    alarmCoordinator.start()
 
     window.rootViewController = self.navigationController
     window.makeKeyAndVisible()

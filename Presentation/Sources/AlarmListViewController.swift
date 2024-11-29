@@ -3,8 +3,8 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-public class ViewController: UIViewController {
-  private var viewModel: ViewModel
+public class AlarmListViewController: UIViewController {
+  private var viewModel: AlarmViewModel
   private var disposeBag = DisposeBag()
 
   let viewDidAppearTrigger = PublishSubject<Void>()
@@ -23,11 +23,11 @@ public class ViewController: UIViewController {
     tableView.translatesAutoresizingMaskIntoConstraints = false
     tableView.frame = CGRect(origin: .zero, size: .zero)
     tableView.backgroundColor = .black
-    tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+    tableView.register(AlarmListTableViewCell.self, forCellReuseIdentifier: AlarmListTableViewCell.identifier)
     return tableView
   }()
 
-  public init(viewModel: ViewModel) {
+  public init(viewModel: AlarmViewModel) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
@@ -49,21 +49,29 @@ public class ViewController: UIViewController {
   }
 
   func bind() {
-    let input = ViewModel.Input(refresh: viewDidAppearTrigger)
+    let input = AlarmViewModel.Input(
+      refresh: viewDidAppearTrigger,
+      tapButton: button.rx.tap.asObservable()
+    )
 
     let output = viewModel.transform(from: input)
 
-    output.movieList
+    output.alarmList
       .observe(on: MainScheduler.instance)
-      .bind(to: tableView.rx.items(cellIdentifier: TableViewCell.identifier, cellType: TableViewCell.self)) { (row, movie, cell) in
-        cell.setup(movie: movie)
+      .bind(to: tableView.rx.items(cellIdentifier: AlarmListTableViewCell.identifier, cellType: AlarmListTableViewCell.self)) { (row, alarm, cell) in
+        cell.setup(alarm: alarm)
       }
       .disposed(by: disposeBag)
+
+//    output.tap.observe(on: MainScheduler.instance).bind { result in
+//      print(result)
+//    }
+//    .disposed(by: disposeBag)
   }
 
 }
 
-extension ViewController {
+extension AlarmListViewController {
   func setView() {
     view.addSubview(button)
     view.addSubview(tableView)

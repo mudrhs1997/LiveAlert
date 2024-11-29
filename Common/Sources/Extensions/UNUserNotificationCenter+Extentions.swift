@@ -1,29 +1,15 @@
-//
-//  UNUserNotificationCenter+Extentions.swift
-//  Common
-//
-//  Created by 정명곤 on 11/28/24.
-//
 
 import Foundation
+import UserNotifications
 
 
 extension UNUserNotificationCenter {
-  func addNotificationRequest(by date: DateComponents, id: String) {
+  public func addNotificationRequest(id: String,
+                                     title: String,
+                                     body: String,
+                                     at date: DateComponents,
+                                     repeats: Bool = true) {
 
-    let content = UNMutableNotificationContent()
-    content.title = "title"
-    content.body = "body"
-    content.sound = .default
 
-    let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-
-    let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
-
-    self.add(request) { error in
-      return false
-    }
-
-    return true
   }
 }

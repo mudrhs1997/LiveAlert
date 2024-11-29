@@ -4,7 +4,7 @@ import Presentation
 import Domain
 import Data
 
-final class MovieCoordinator: Coordinator {
+final class AlarmCoordinator: Coordinator {
   // MARK: - Property
   var childeren: [Coordinator] = []
   var navigationController: UINavigationController
@@ -18,8 +18,8 @@ final class MovieCoordinator: Coordinator {
   func start() {
     let repository = RepositoryImpl() // Data layer
     let useCase = UseCase(repository: repository) // Domain layer
-    let viewModel = ViewModel(useCase: useCase) // Presentation layer
-    let viewController = ViewController(viewModel: viewModel)
+    let viewModel = AlarmViewModel(useCase: useCase) // Presentation layer
+    let viewController = AlarmListViewController(viewModel: viewModel)
 
     navigationController.pushViewController(viewController, animated: true)
   }
